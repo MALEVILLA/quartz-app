@@ -1,0 +1,232 @@
+JavaScript
+// Base de datos simulada en memoria / localStorage
+const infoPaises = {
+  "España": { idFiscal: "CIF/NIF", continente: "Europa" },
+  "México": { idFiscal: "RFC", continente: "América" },
+  "Estados Unidos": { idFiscal: "EIN", continente: "América" },
+  "Colombia": { idFiscal: "NIT", continente: "América" }
+};
+
+let empresas = [
+  {
+    id: "emp_1",
+    nombre: "Acme Corp",
+    direccion: "Calle Gran Vía 45",
+    mail: "finance@acme.com",
+    pais: "España",
+    idFiscal: "B12345678", // Se calcula según el país
+    actividad: "Tecnología",
+    continente: "Europa"  // Asignado automático
+  }
+];
+
+let cuentasBancarias = [
+  {
+    id: "cta_1",
+    empresaId: "emp_1", // Enlace clave con la empresa
+    banco: "Santander",
+    pais: "España",
+    direccion: "Paseo de la Castellana 20",
+    moneda: "EUR",
+    iban: "ES210049...",
+    ruta: "N/A",
+    swift: "BSANESSMXXX",
+    continente: "Europa"
+  }
+];
+
+
+HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quartz - Repositorio de Cuentas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen p-6 md:p-12">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-12 flex justify-between items-center border-b border-gray-200 pb-6">
+            <div>
+                <h1 class="text-3xl font-semibold tracking-tight text-gray-900">Quartz</h1>
+                <p class="text-sm text-gray-500 mt-1">Gestión global de tesorería corporativa.</p>
+            </div>
+            <span class="text-xs font-mono bg-gray-900 text-white px-3 py-1.5 rounded-full uppercase tracking-wider">Modo Local</span>
+        </header>
+
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-8">
+            <h2 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Búsqueda Inteligente</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <input type="text" id="searchGeneral" oninput="filtrarTodo()" placeholder="Buscar por Empresa, Banco..." class="border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-black">
+                <select id="filterMoneda" onchange="filtrarTodo()" class="border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black">
+                    <option value="">Cualquier Moneda</option>
+                    <option value="EUR">EUR</option>
+                    <option value="USD">USD</option>
+                    <option value="MXN">MXN</option>
+                </select>
+                <select id="filterPais" onchange="filtrarTodo()" class="border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black">
+                    <option value="">Cualquier País</option>
+                    <option value="España">España</option>
+                    <option value="México">México</option>
+                    <option value="Estados Unidos">Estados Unidos</option>
+                </select>
+                <select id="filterContinente" onchange="filtrarTodo()" class="border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-black">
+                    <option value="">Cualquier Continente</option>
+                    <option value="Europa">Europa</option>
+                    <option value="América">América</option>
+                </select>
+            </div>
+        </section>
+
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h2 class="text-xl font-medium mb-4 text-gray-800">Dashboard de Empresas</h2>
+                <div id="dashboardEmpresas" class="space-y-4">
+                    </div>
+            </section>
+
+            <section class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h2 class="text-xl font-medium mb-4 text-gray-800">Dashboard de Cuentas</h2>
+                <div id="dashboardCuentas" class="space-y-4">
+                    </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Datos de Configuración Geográfica
+        const diccionarioPaises = {
+            "España": { taxLabel: "CIF/NIF", continente: "Europa" },
+            "México": { taxLabel: "RFC", continente: "América" },
+            "Estados Unidos": { taxLabel: "EIN", continente: "América" },
+            "Colombia": { taxLabel: "NIT", continente: "América" }
+        };
+
+        // Estado inicial de la base de datos (Sólida y Relacional)
+        let datasetEmpresas = [
+            { id: "e1", nombre: "Inditex S.A.", direccion: "Av. de la Diputación, A Coruña", mail: "finance@inditex.com", pais: "España", taxId: "A15075062", actividad: "Retail Textil", continente: "Europa" },
+            { id: "e2", nombre: "Femsa Logística", direccion: " Monterrey, Nuevo León", mail: "tesoreria@femsa.mx", pais: "México", taxId: "FEM950523ABC", actividad: "Bebidas y Comercio", continente: "América" }
+        ];
+
+        let datasetCuentas = [
+            { id: "c1", empresaId: "e1", banco: "Banco Santander", direccion: "Madrid, ES", moneda: "EUR", iban: "ES21 0049 1500 1234 5678", ruta: "No Aplica", swift: "BSANESSMMXX", pais: "España", continente: "Europa" },
+            { id: "c2", empresaId: "e1", banco: "JP Morgan Chase", direccion: "New York, USA", moneda: "USD", iban: "US12 2000 1111 2222 3333", ruta: "021000021", swift: "CHASUS33XXX", pais: "Estados Unidos", continente: "América" },
+            { id: "c3", empresaId: "e2", banco: "BBVA México", direccion: "CDMX, MX", moneda: "MXN", iban: "MX32 0123 4567 8901 2345", ruta: "No Aplica", swift: "BBVAMXMMXXX", pais: "México", continente: "América" }
+        ];
+
+        // Renderizadores de los Dashboards cruzados
+        function renderDashboards(empresasFiltradas, cuentasFiltradas) {
+            const empContainer = document.getElementById("dashboardEmpresas");
+            const ctaContainer = document.getElementById("dashboardCuentas");
+
+            empContainer.innerHTML = "";
+            ctaContainer.innerHTML = "";
+
+            // Renderizar Empresas con sus cuentas asociadas y países de origen
+            empresasFiltradas.forEach(emp => {
+                const cuentasAsociadas = datasetCuentas.filter(c => c.empresaId === emp.id);
+                const paisesCuentas = [...new Set(cuentasAsociadas.map(c => c.pais))];
+                const labelFiscal = diccionarioPaises[emp.pais]?.taxLabel || "ID Fiscal";
+
+                let html = `
+                    <div class="border border-gray-100 rounded-xl p-4 bg-gray-50/50 hover:border-gray-300 transition-all">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-semibold text-base">${emp.nombre}</h3>
+                            <span class="text-xs px-2 py-0.5 bg-gray-200 rounded text-gray-700">${emp.continente}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">${emp.actividad} · ${emp.mail}</p>
+                        <p class="text-xs font-mono text-gray-600 mt-2"><strong>${labelFiscal}:</strong> ${emp.taxId} (${emp.pais})</p>
+                        
+                        <div class="mt-3 pt-3 border-t border-gray-200/60">
+                            <span class="text-[11px] font-medium uppercase tracking-wider text-gray-400 block mb-1">Cuentas y Países Vinculados:</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                ${cuentasAsociadas.map(c => `<span class="text-xs bg-white border border-gray-200 px-2 py-0.5 rounded text-gray-600">${c.banco} (${c.moneda})</span>`).join('') || '<span class="text-xs text-gray-400 italic">Sin cuentas asociadas</span>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                empContainer.innerHTML += html;
+            });
+
+            // Renderizar Cuentas mostrando la Empresa propietaria
+            cuentasFiltradas.forEach(cta => {
+                const empresaPropietaria = datasetEmpresas.find(e => e.id === cta.empresaId);
+                const shareText = `Datos Bancarios - ${empresaPropietaria?.nombre || 'Empresa'}\nBanco: ${cta.banco}\nPaís: ${cta.pais} (${cta.moneda})\nIBAN: ${cta.iban}\nSWIFT: ${cta.swift}\nRUTA: ${cta.ruta}`;
+                const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+
+                let html = `
+                    <div class="border border-gray-100 rounded-xl p-4 bg-gray-50/50 hover:border-gray-300 transition-all">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-semibold text-sm text-gray-500 uppercase tracking-tight">Propietario: ${empresaPropietaria ? empresaPropietaria.nombre : "Desconocido"}</h3>
+                                <h4 class="font-bold text-base text-gray-900 mt-0.5">${cta.banco}</h4>
+                            </div>
+                            <span class="text-xs font-bold px-2 py-0.5 bg-black text-white rounded">${cta.moneda}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-3 text-xs font-mono text-gray-600">
+                            <div><strong>IBAN:</strong> ${cta.iban}</div>
+                            <div><strong>SWIFT/BIC:</strong> ${cta.swift}</div>
+                            <div><strong>Ruta/ABA:</strong> ${cta.ruta}</div>
+                            <div><strong>País/Región:</strong> ${cta.pais} (${cta.continente})</div>
+                        </div>
+
+                        <div class="mt-4 flex justify-end">
+                            <a href="${whatsappUrl}" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
+                                💬 Compartir vía WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                `;
+                ctaContainer.innerHTML += html;
+            });
+        }
+
+        // Lógica de Filtros en Tiempo Real
+        function filtrarTodo() {
+            const query = document.getElementById("searchGeneral").value.toLowerCase();
+            const moneda = document.getElementById("filterMoneda").value;
+            const pais = document.getElementById("filterPais").value;
+            const continente = document.getElementById("filterContinente").value;
+
+            // Filtrar Cuentas primero
+            const cuentasFiltradas = datasetCuentas.filter(cta => {
+                const empresa = datasetEmpresas.find(e => e.id === cta.empresaId);
+                const matchQuery = cta.banco.toLowerCase().includes(query) || 
+                                   (empresa && empresa.nombre.toLowerCase().includes(query)) ||
+                                   cta.iban.toLowerCase().includes(query);
+                const matchMoneda = moneda === "" || cta.moneda === moneda;
+                const matchPais = pais === "" || cta.pais === pais;
+                const matchContinente = continente === "" || cta.continente === continente;
+
+                return matchQuery && matchMoneda && matchPais && matchContinente;
+            });
+
+            // Filtrar Empresas basadas en la búsqueda directa o si tienen cuentas que coinciden
+            const empresasFiltradas = datasetEmpresas.filter(emp => {
+                const matchQuery = emp.nombre.toLowerCase().includes(query) || emp.actividad.toLowerCase().includes(query);
+                const matchPais = pais === "" || emp.pais === pais;
+                const matchContinente = continente === "" || emp.continente === continente;
+                
+                // Si se busca por una moneda específica, solo mostramos empresas con cuentas en esa moneda
+                const tieneCuentaConMoneda = moneda === "" || datasetCuentas.some(c => c.empresaId === emp.id && c.moneda === moneda);
+
+                return (matchQuery || datasetCuentas.some(c => c.empresaId === emp.id && c.banco.toLowerCase().includes(query))) && matchPais && matchContinente && tieneCuentaConMoneda;
+            });
+
+            renderDashboards(empresasFiltradas, cuentasFiltradas);
+        }
+
+        // Carga inicial de la aplicación
+        window.onload = () => {
+            renderDashboards(datasetEmpresas, datasetCuentas);
+        };
+    </script>
+</body>
+</html>
