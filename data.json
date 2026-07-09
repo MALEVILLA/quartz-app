@@ -1,0 +1,108 @@
+{
+  "paises": {
+    "España": { "taxLabel": "CIF/NIF", "continente": "Europa", "codigo": "ES" },
+    "México": { "taxLabel": "RFC", "continente": "América", "codigo": "MX" },
+    "Estados Unidos": { "taxLabel": "EIN", "continente": "América", "codigo": "US" },
+    "Colombia": { "taxLabel": "NIT", "continente": "América", "codigo": "CO" },
+    "Argentina": { "taxLabel": "CUIT", "continente": "América", "codigo": "AR" },
+    "Chile": { "taxLabel": "RUT", "continente": "América", "codigo": "CL" },
+    "Alemania": { "taxLabel": "USt-IdNr", "continente": "Europa", "codigo": "DE" },
+    "Francia": { "taxLabel": "SIRET", "continente": "Europa", "codigo": "FR" },
+    "Reino Unido": { "taxLabel": "UTR", "continente": "Europa", "codigo": "GB" }
+  },
+  "continentes": ["Europa", "América", "Asia", "África", "Oceanía"],
+  "empresas": [
+    {
+      "id": "e1",
+      "nombre": "Inditex S.A.",
+      "direccion": "Av. de la Diputación, A Coruña",
+      "mail": "finance@inditex.com",
+      "pais": "España",
+      "taxId": "A15075062",
+      "actividad": "Retail Textil",
+      "continente": "Europa"
+    },
+    {
+      "id": "e2",
+      "nombre": "Femsa Logística",
+      "direccion": "Monterrey, Nuevo León",
+      "mail": "tesoreria@femsa.mx",
+      "pais": "México",
+      "taxId": "FEM950523ABC",
+      "actividad": "Bebidas y Comercio",
+      "continente": "América"
+    },
+    {
+      "id": "e3",
+      "nombre": "Apple Inc.",
+      "direccion": "Cupertino, California",
+      "mail": "finance@apple.com",
+      "pais": "Estados Unidos",
+      "taxId": "942404110",
+      "actividad": "Tecnología",
+      "continente": "América"
+    }
+  ],
+  "cuentas": [
+    {
+      "id": "c1",
+      "empresaId": "e1",
+      "banco": "Banco Santander",
+      "direccion": "Madrid, ES",
+      "moneda": "EUR",
+      "iban": "ES21 0049 1500 1234 5678",
+      "ruta": "No Aplica",
+      "swift": "BSANESSMMXX",
+      "pais": "España",
+      "continente": "Europa"
+    },
+    {
+      "id": "c2",
+      "empresaId": "e1",
+      "banco": "JP Morgan Chase",
+      "direccion": "New York, USA",
+      "moneda": "USD",
+      "iban": "US12 2000 1111 2222 3333",
+      "ruta": "021000021",
+      "swift": "CHASUS33XXX",
+      "pais": "Estados Unidos",
+      "continente": "América"
+    },
+    {
+      "id": "c3",
+      "empresaId": "e2",
+      "banco": "BBVA México",
+      "direccion": "CDMX, MX",
+      "moneda": "MXN",
+      "iban": "MX32 0123 4567 8901 2345",
+      "ruta": "No Aplica",
+      "swift": "BBVAMXMMXXX",
+      "pais": "México",
+      "continente": "América"
+    },
+    {
+      "id": "c4",
+      "empresaId": "e3",
+      "banco": "Bank of America",
+      "direccion": "Charlotte, NC",
+      "moneda": "USD",
+      "iban": "US45 3000 1234 5678 9012",
+      "ruta": "026009593",
+      "swift": "BOFAUS3SXXX",
+      "pais": "Estados Unidos",
+      "continente": "América"
+    },
+    {
+      "id": "c5",
+      "empresaId": "e1",
+      "banco": "BBVA España",
+      "direccion": "Barcelona, ES",
+      "moneda": "EUR",
+      "iban": "ES54 0012 4587 9665 5633",
+      "ruta": "No Aplica",
+      "swift": "BBVAESMXXX",
+      "pais": "España",
+      "continente": "Europa"
+    }
+  ]
+}
